@@ -1,12 +1,35 @@
+<!-- templates/index.html -->
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-    <title>Webdung</title>
+  <meta charset="UTF-8">
+  <title>Düngeberechnung</title>
+  <style>
+    body { font-family: Arial; padding: 20px; background-color: #f3f3f3; }
+    .container { max-width: 600px; margin: auto; background: white; padding: 20px; border-radius: 10px; }
+    img { max-width: 150px; }
+    input, button { width: 100%; padding: 10px; margin: 10px 0; }
+  </style>
 </head>
 <body>
+  <div class="container">
+    <img src="/logo.png" alt="Logo">
+    <h1>Düngeberechnung</h1>
 
-    <h1>Test!!!!!!</h1>
-    <img th:src="@{/logo.png}" alt="Logo" />
+    <form th:action="@{/berechne}" method="post">
+      <label>Fläche (ha):</label>
+      <input type="number" step="0.01" name="flaeche" required>
 
+      <label>Stickstoffbedarf pro ha (kg):</label>
+      <input type="number" step="1" name="bedarf" required>
+
+      <button type="submit">Berechnen</button>
+    </form>
+
+    <div th:if="${ergebnis != null}">
+      <h2>Ergebnis</h2>
+      <p>Gesamter Düngebedarf: <strong th:text="${ergebnis}">0</strong> kg Stickstoff</p>
+    </div>
+  </div>
 </body>
 </html>
