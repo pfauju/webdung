@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class HelloController {
 
     @GetMapping("/")
-    public String hello() {
-        return "Willkommen bei Webdung!";
+    public String index() {
+        return "index";
     }
 }
