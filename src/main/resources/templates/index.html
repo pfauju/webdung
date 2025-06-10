@@ -1,35 +1,90 @@
-<!-- templates/index.html -->
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html lang="de">
 <head>
-  <meta charset="UTF-8">
-  <title>Düngeberechnung</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Meine Homepage</title>
   <style>
-    body { font-family: Arial; padding: 20px; background-color: #f3f3f3; }
-    .container { max-width: 600px; margin: auto; background: white; padding: 20px; border-radius: 10px; }
-    img { max-width: 150px; }
-    input, button { width: 100%; padding: 10px; margin: 10px 0; }
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      display: flex;
+      height: 100vh;
+    }
+    nav {
+      width: 200px;
+      background-color: #2c3e50;
+      color: white;
+      display: flex;
+      flex-direction: column;
+      padding-top: 20px;
+    }
+    nav a {
+      color: white;
+      padding: 15px 20px;
+      text-decoration: none;
+      cursor: pointer;
+      border-left: 5px solid transparent;
+      transition: background-color 0.3s, border-left-color 0.3s;
+    }
+    nav a:hover, nav a.active {
+      background-color: #34495e;
+      border-left-color: #1abc9c;
+    }
+    main {
+      flex-grow: 1;
+      padding: 20px;
+      background-color: #ecf0f1;
+    }
+    h1 {
+      margin-top: 0;
+    }
   </style>
 </head>
 <body>
-  <div class="container">
-    <img src="/logo.png" alt="Logo">
-    <h1>Düngeberechnung</h1>
 
-    <form th:action="@{/berechne}" method="post">
-      <label>Fläche (ha):</label>
-      <input type="number" step="0.01" name="flaeche" required>
+  <nav>
+    <a href="#" id="menu-duengestrategie" class="active">Düngestrategie</a>
+    <a href="#" id="menu-lager">Lager</a>
+    <a href="#" id="menu-felder">Felder</a>
+  </nav>
 
-      <label>Stickstoffbedarf pro ha (kg):</label>
-      <input type="number" step="1" name="bedarf" required>
+  <main id="content">
+    <h1>Willkommen auf der Homepage</h1>
+    <p>Wähle einen Menüpunkt links aus, um mehr zu sehen.</p>
+  </main>
 
-      <button type="submit">Berechnen</button>
-    </form>
+  <script>
+    const content = document.getElementById('content');
+    const menuItems = document.querySelectorAll('nav a');
 
-    <div th:if="${ergebnis != null}">
-      <h2>Ergebnis</h2>
-      <p>Gesamter Düngebedarf: <strong th:text="${ergebnis}">0</strong> kg Stickstoff</p>
-    </div>
-  </div>
+    const pages = {
+      'menu-duengestrategie': `
+        <h1>Düngestrategie</h1>
+        <p>Hier findest du Informationen und Einstellungen zur Düngestrategie.</p>
+      `,
+      'menu-lager': `
+        <h1>Lager</h1>
+        <p>Übersicht und Verwaltung des Lagers.</p>
+      `,
+      'menu-felder': `
+        <h1>Felder</h1>
+        <p>Informationen zu den Feldern und deren Bewirtschaftung.</p>
+      `
+    };
+
+    menuItems.forEach(item => {
+      item.addEventListener('click', e => {
+        e.preventDefault();
+        // Aktiven Menüpunkt setzen
+        menuItems.forEach(i => i.classList.remove('active'));
+        item.classList.add('active');
+
+        // Inhalt ändern
+        content.innerHTML = pages[item.id];
+      });
+    });
+  </script>
+
 </body>
 </html>
