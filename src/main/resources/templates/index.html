@@ -256,6 +256,114 @@
               Optimieren Sie Ihre Düngung für nachhaltige und ertragreiche Landwirtschaft.
             </p>
             
+            <!-- Neue Düngestrategie erstellen -->
+            <div class="info-box" style="margin-bottom: 25px; border-left-color: #27ae60;">
+              <h3>🌱 Neue Düngestrategie erstellen</h3>
+              <div class="strategie-form">
+                <div class="form-row">
+                  <div class="form-group">
+                    <label for="strategie-name">Strategiename:</label>
+                    <input type="text" id="strategie-name" placeholder="z.B. Winterweizen Grunddüngung">
+                  </div>
+                  <div class="form-group">
+                    <label for="kultur-auswahl">Kultur:</label>
+                    <select id="kultur-auswahl">
+                      <option value="">-- Kultur auswählen --</option>
+                      <option value="winterweizen">Winterweizen</option>
+                      <option value="sommerweizen">Sommerweizen</option>
+                      <option value="wintergerste">Wintergerste</option>
+                      <option value="sommergerste">Sommergerste</option>
+                      <option value="roggen">Roggen</option>
+                      <option value="winterraps">Winterraps</option>
+                      <option value="mais">Mais</option>
+                      <option value="zuckerruebe">Zuckerrübe</option>
+                      <option value="kartoffel">Kartoffel</option>
+                      <option value="soja">Soja</option>
+                    </select>
+                  </div>
+                </div>
+                
+                <div class="form-row">
+                  <div class="form-group">
+                    <label for="duenger-auswahl">Dünger:</label>
+                    <select id="duenger-auswahl">
+                      <option value="">-- Dünger auswählen --</option>
+                      <option value="dap">DAP (Diammoniumphosphat)</option>
+                      <option value="nac">NAC (Natriumacetat)</option>
+                      <option value="harnstoff">Harnstoff</option>
+                    </select>
+                  </div>
+                  <div class="form-group">
+                    <label for="duenger-menge">Düngermenge (kg/ha):</label>
+                    <input type="number" id="duenger-menge" min="0" step="0.1" placeholder="z.B. 150">
+                  </div>
+                </div>
+                
+                <div class="form-row">
+                  <div class="form-group">
+                    <label for="zeitpunkt-auswahl">Ausbringungszeitpunkt:</label>
+                    <select id="zeitpunkt-auswahl">
+                      <option value="">-- Zeitpunkt auswählen --</option>
+                      <option value="vor-bodenbearbeitung">Vor der Bodenbearbeitung</option>
+                      <option value="nach-bodenbearbeitung">Nach der Bodenbearbeitung</option>
+                      <option value="in-bestand">In den Bestand</option>
+                      <option value="zur-saat">Zur Saat</option>
+                      <option value="vor-winter">Vor Winter</option>
+                      <option value="fruehling">Im Frühjahr</option>
+                    </select>
+                  </div>
+                  <div class="form-group">
+                    <label for="geraet-auswahl">Ausbringungsgerät:</label>
+                    <select id="geraet-auswahl">
+                      <option value="">-- Gerät auswählen --</option>
+                      <option value="duengerstreuer">Düngerstreuer</option>
+                      <option value="guellefass">Güllefass</option>
+                      <option value="feldspritze">Feldspritze</option>
+                      <option value="pneumatik-streuer">Pneumatik-Streuer</option>
+                      <option value="grubber-kombination">Grubber mit Düngung</option>
+                      <option value="saemaschine">Sämaschine mit Düngung</option>
+                      <option value="scheibenduenger">Scheibenraddüngerstreuer</option>
+                    </select>
+                  </div>
+                </div>
+                
+                <div class="form-row">
+                  <div class="form-group" style="flex: 2;">
+                    <label for="strategie-bemerkung">Bemerkungen (optional):</label>
+                    <textarea id="strategie-bemerkung" rows="3" placeholder="z.B. Besondere Hinweise zur Ausbringung, Witterungsbedingungen..."></textarea>
+                  </div>
+                  <div class="form-group">
+                    <label>&nbsp;</label>
+                    <button onclick="strategieHinzufuegen()" class="btn-primary">Strategie speichern</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Gespeicherte Strategien -->
+            <div class="info-box" style="margin-bottom: 25px; border-left-color: #3498db;">
+              <h3>📋 Gespeicherte Düngestrategien</h3>
+              <div id="strategien-container">
+                <table class="strategien-tabelle" id="strategien-tabelle">
+                  <thead>
+                    <tr>
+                      <th>Strategiename</th>
+                      <th>Kultur</th>
+                      <th>Dünger</th>
+                      <th>Menge (kg/ha)</th>
+                      <th>Zeitpunkt</th>
+                      <th>Gerät</th>
+                      <th>Aktionen</th>
+                    </tr>
+                  </thead>
+                  <tbody id="strategien-tbody">
+                    <!-- Strategien werden hier eingefügt -->
+                  </tbody>
+                </table>
+              </div>
+            </div>
+            
+            <!-- Strategie-Übersicht -->
             <div class="info-grid">
               <div class="info-box">
                 <h3>Nährstoffplanung</h3>
@@ -425,8 +533,8 @@
               </div>
               
               <div class="info-box" style="border-left-color: #f39c12;">
-                <h3>Ertragskartierung</h3>
-                <p>Erfassung und Analyse der Erträge für kontinuierliche Optimierung.</p>
+                <h3>Düngestrategie</h3>
+                <p>Planung, Erfassung und Analyse der Düngestrategie für kontinuierliche Optimierung.</p>
               </div>
             </div>
           </div>
@@ -992,6 +1100,360 @@
           setHeuteDatum();
           bestaendeAktualisieren();
           buchungshistorieAktualisieren();
+        }, 100);
+      }
+    };
+
+    // CSS für Düngestrategie erweitern
+    const strategieStyle = document.createElement('style');
+    strategieStyle.textContent = `
+      .strategie-form {
+        margin-top: 15px;
+      }
+      
+      .strategie-form .form-row {
+        display: flex;
+        gap: 15px;
+        margin-bottom: 15px;
+        flex-wrap: wrap;
+      }
+      
+      .strategie-form .form-group {
+        flex: 1;
+        min-width: 200px;
+      }
+      
+      .strategie-form .form-group label {
+        display: block;
+        margin-bottom: 5px;
+        font-weight: 600;
+        color: #2c3e50;
+      }
+      
+      .strategie-form .form-group input,
+      .strategie-form .form-group select,
+      .strategie-form .form-group textarea {
+        width: 100%;
+        padding: 8px 12px;
+        border: 1px solid #ddd;
+        border-radius: 6px;
+        font-size: 14px;
+        transition: border-color 0.3s;
+        font-family: inherit;
+      }
+      
+      .strategie-form .form-group input:focus,
+      .strategie-form .form-group select:focus,
+      .strategie-form .form-group textarea:focus {
+        outline: none;
+        border-color: #27ae60;
+        box-shadow: 0 0 0 2px rgba(39, 174, 96, 0.2);
+      }
+      
+      .strategie-form .form-group textarea {
+        resize: vertical;
+        min-height: 60px;
+      }
+      
+      .strategien-tabelle {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 15px;
+        background: white;
+        border-radius: 8px;
+        overflow: hidden;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+      }
+      
+      .strategien-tabelle th {
+        background-color: #27ae60;
+        color: white;
+        padding: 12px 8px;
+        text-align: left;
+        font-weight: 600;
+        font-size: 14px;
+      }
+      
+      .strategien-tabelle td {
+        padding: 12px 8px;
+        border-bottom: 1px solid #eee;
+        font-size: 14px;
+      }
+      
+      .strategien-tabelle tr:hover {
+        background-color: #f8f9fa;
+      }
+      
+      .kultur-badge {
+        display: inline-block;
+        padding: 4px 8px;
+        border-radius: 4px;
+        font-size: 0.85em;
+        font-weight: 500;
+        color: white;
+      }
+      
+      .kultur-getreide { background-color: #f39c12; }
+      .kultur-raps { background-color: #f1c40f; color: #2c3e50; }
+      .kultur-mais { background-color: #27ae60; }
+      .kultur-zuckerruebe { background-color: #e74c3c; }
+      .kultur-kartoffel { background-color: #3498db; }
+      .kultur-soja { background-color: #9b59b6; }
+      
+      .duenger-badge {
+        display: inline-block;
+        padding: 4px 8px;
+        border-radius: 4px;
+        font-size: 0.85em;
+        font-weight: 500;
+        color: white;
+        background-color: #34495e;
+      }
+      
+      .zeitpunkt-badge {
+        display: inline-block;
+        padding: 4px 8px;
+        border-radius: 4px;
+        font-size: 0.85em;
+        font-weight: 500;
+        background-color: #ecf0f1;
+        color: #2c3e50;
+      }
+      
+      .btn-edit {
+        background-color: #3498db;
+        color: white;
+        border: none;
+        padding: 5px 10px;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 12px;
+        margin-right: 5px;
+      }
+      
+      .btn-edit:hover {
+        background-color: #2980b9;
+      }
+      
+      .btn-delete {
+        background-color: #e74c3c;
+        color: white;
+        border: none;
+        padding: 5px 10px;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 12px;
+      }
+      
+      .btn-delete:hover {
+        background-color: #c0392b;
+      }
+    `;
+    document.head.appendChild(strategieStyle);
+
+    // Düngestrategien Daten
+    let duengestrategien = [];
+
+    // Funktionen für Düngestrategie
+    function strategieHinzufuegen() {
+      const name = document.getElementById('strategie-name').value.trim();
+      const kultur = document.getElementById('kultur-auswahl').value;
+      const duenger = document.getElementById('duenger-auswahl').value;
+      const menge = parseFloat(document.getElementById('duenger-menge').value);
+      const zeitpunkt = document.getElementById('zeitpunkt-auswahl').value;
+      const geraet = document.getElementById('geraet-auswahl').value;
+      const bemerkung = document.getElementById('strategie-bemerkung').value.trim();
+
+      // Validierung
+      if (!name) {
+        alert('Bitte geben Sie einen Strategienamen ein.');
+        return;
+      }
+      if (!kultur) {
+        alert('Bitte wählen Sie eine Kultur aus.');
+        return;
+      }
+      if (!duenger) {
+        alert('Bitte wählen Sie einen Dünger aus.');
+        return;
+      }
+      if (!menge || menge <= 0) {
+        alert('Bitte geben Sie eine gültige Düngermenge ein.');
+        return;
+      }
+      if (!zeitpunkt) {
+        alert('Bitte wählen Sie einen Ausbringungszeitpunkt aus.');
+        return;
+      }
+      if (!geraet) {
+        alert('Bitte wählen Sie ein Ausbringungsgerät aus.');
+        return;
+      }
+
+      // Strategie erstellen
+      const strategie = {
+        id: Date.now(),
+        name: name,
+        kultur: kultur,
+        duenger: duenger,
+        menge: menge,
+        zeitpunkt: zeitpunkt,
+        geraet: geraet,
+        bemerkung: bemerkung,
+        erstellt: new Date().toISOString()
+      };
+
+      duengestrategien.unshift(strategie); // Am Anfang einfügen (neueste zuerst)
+
+      // Anzeige aktualisieren
+      strategienAktualisieren();
+
+      // Formular zurücksetzen
+      document.getElementById('strategie-name').value = '';
+      document.getElementById('kultur-auswahl').value = '';
+      document.getElementById('duenger-auswahl').value = '';
+      document.getElementById('duenger-menge').value = '';
+      document.getElementById('zeitpunkt-auswahl').value = '';
+      document.getElementById('geraet-auswahl').value = '';
+      document.getElementById('strategie-bemerkung').value = '';
+
+      alert('Düngestrategie erfolgreich gespeichert!');
+    }
+
+    function strategienAktualisieren() {
+      const tbody = document.getElementById('strategien-tbody');
+      
+      if (!tbody) return;
+      
+      let html = '';
+      duengestrategien.forEach(strategie => {
+        const kulturName = getKulturDisplayName(strategie.kultur);
+        const duengerName = getDuengerDisplayName(strategie.duenger);
+        const zeitpunktName = getZeitpunktDisplayName(strategie.zeitpunkt);
+        const geraetName = getGeraetDisplayName(strategie.geraet);
+
+        html += `
+          <tr>
+            <td><strong>${strategie.name}</strong></td>
+            <td><span class="kultur-badge ${getKulturBadgeClass(strategie.kultur)}">${kulturName}</span></td>
+            <td><span class="duenger-badge">${duengerName}</span></td>
+            <td><strong>${strategie.menge.toLocaleString('de-DE')}</strong></td>
+            <td><span class="zeitpunkt-badge">${zeitpunktName}</span></td>
+            <td>${geraetName}</td>
+            <td>
+              <button class="btn-edit" onclick="strategieBearbeiten(${strategie.id})" title="Bearbeiten">✏️</button>
+              <button class="btn-delete" onclick="strategieLoeschen(${strategie.id})" title="Löschen">🗑️</button>
+            </td>
+          </tr>
+        `;
+      });
+
+      if (html === '') {
+        html = '<tr><td colspan="7" style="text-align: center; color: #7f8c8d; font-style: italic;">Noch keine Düngestrategien erstellt</td></tr>';
+      }
+
+      tbody.innerHTML = html;
+    }
+
+    function getKulturDisplayName(kultur) {
+      const namen = {
+        'winterweizen': 'Winterweizen',
+        'sommerweizen': 'Sommerweizen',
+        'wintergerste': 'Wintergerste',
+        'sommergerste': 'Sommergerste',
+        'roggen': 'Roggen',
+        'winterraps': 'Winterraps',
+        'mais': 'Mais',
+        'zuckerruebe': 'Zuckerrübe',
+        'kartoffel': 'Kartoffel',
+        'soja': 'Soja'
+      };
+      return namen[kultur] || kultur;
+    }
+
+    function getDuengerDisplayName(duenger) {
+      const namen = {
+        'dap': 'DAP',
+        'nac': 'NAC',
+        'harnstoff': 'Harnstoff'
+      };
+      return namen[duenger] || duenger;
+    }
+
+    function getZeitpunktDisplayName(zeitpunkt) {
+      const namen = {
+        'vor-bodenbearbeitung': 'Vor Bodenbearbeitung',
+        'nach-bodenbearbeitung': 'Nach Bodenbearbeitung',
+        'in-bestand': 'In den Bestand',
+        'zur-saat': 'Zur Saat',
+        'vor-winter': 'Vor Winter',
+        'fruehling': 'Im Frühjahr'
+      };
+      return namen[zeitpunkt] || zeitpunkt;
+    }
+
+    function getGeraetDisplayName(geraet) {
+      const namen = {
+        'duengerstreuer': 'Düngerstreuer',
+        'guellefass': 'Güllefass',
+        'feldspritze': 'Feldspritze',
+        'pneumatik-streuer': 'Pneumatik-Streuer',
+        'grubber-kombination': 'Grubber mit Düngung',
+        'saemaschine': 'Sämaschine mit Düngung',
+        'scheibenduenger': 'Scheibenraddüngerstreuer'
+      };
+      return namen[geraet] || geraet;
+    }
+
+    function getKulturBadgeClass(kultur) {
+      if (['winterweizen', 'sommerweizen', 'wintergerste', 'sommergerste', 'roggen'].includes(kultur)) {
+        return 'kultur-getreide';
+      }
+      if (kultur === 'winterraps') return 'kultur-raps';
+      if (kultur === 'mais') return 'kultur-mais';
+      if (kultur === 'zuckerruebe') return 'kultur-zuckerruebe';
+      if (kultur === 'kartoffel') return 'kultur-kartoffel';
+      if (kultur === 'soja') return 'kultur-soja';
+      return 'kultur-getreide';
+    }
+
+    function strategieLoeschen(id) {
+      if (!confirm('Möchten Sie diese Düngestrategie wirklich löschen?')) {
+        return;
+      }
+
+      duengestrategien = duengestrategien.filter(s => s.id !== id);
+      strategienAktualisieren();
+    }
+
+    function strategieBearbeiten(id) {
+      const strategie = duengestrategien.find(s => s.id === id);
+      if (!strategie) return;
+
+      // Formular mit Werten füllen
+      document.getElementById('strategie-name').value = strategie.name;
+      document.getElementById('kultur-auswahl').value = strategie.kultur;
+      document.getElementById('duenger-auswahl').value = strategie.duenger;
+      document.getElementById('duenger-menge').value = strategie.menge;
+      document.getElementById('zeitpunkt-auswahl').value = strategie.zeitpunkt;
+      document.getElementById('geraet-auswahl').value = strategie.geraet;
+      document.getElementById('strategie-bemerkung').value = strategie.bemerkung;
+
+      // Strategie löschen (wird durch Speichern ersetzt)
+      duengestrategien = duengestrategien.filter(s => s.id !== id);
+      strategienAktualisieren();
+
+      // Zum Formular scrollen
+      document.querySelector('.strategie-form').scrollIntoView({ behavior: 'smooth' });
+    }
+
+    // Beim Laden der Düngestrategie-Seite die Tabelle initialisieren
+    const originalShowPageStrategie = showPage;
+    showPage = function(pageName, activeElement) {
+      originalShowPageStrategie(pageName, activeElement);
+      if (pageName === 'duengestrategie') {
+        setTimeout(() => {
+          strategienAktualisieren();
         }, 100);
       }
     };
