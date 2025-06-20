@@ -34,24 +34,19 @@
       background-color: rgba(255,255,255,0.05);
     }
 
-    .logo-placeholder {
-      width: 120px;
-      height: 60px;
-      background: linear-gradient(45deg, #1abc9c, #16a085);
-      border-radius: 8px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-weight: bold;
-      font-size: 18px;
-      color: white;
+    .logo-image {
+      max-width: 150px;
+      height: auto;
+      display: block;
       margin: 0 auto;
       cursor: pointer;
-      transition: transform 0.2s;
+      transition: transform 0.2s, filter 0.2s;
+      border-radius: 4px;
     }
 
-    .logo-placeholder:hover {
+    .logo-image:hover {
       transform: scale(1.05);
+      filter: brightness(1.1);
     }
 
     nav a {
@@ -202,9 +197,13 @@
 <body>
   <nav role="navigation" aria-label="Hauptnavigation">
     <div class="logo-section">
-      <div class="logo-placeholder" id="logo-home" role="button" aria-label="Zur Startseite" tabindex="0">
-        AGRI-SYS
-      </div>
+      <img src="src/main/resources/static/logo.png" 
+           alt="Firmenlogo" 
+           id="logo-home" 
+           class="logo-image"
+           role="button" 
+           aria-label="Zur Startseite" 
+           tabindex="0">
     </div>
     <a href="#" id="menu-duengestrategie" class="active" role="menuitem" aria-label="Düngestrategie verwalten">Düngestrategie</a>
     <a href="#" id="menu-lager" role="menuitem" aria-label="Lager verwalten">Lager</a>
@@ -379,6 +378,7 @@
     });
 
     // Logo/Home Navigation
+    const logoHome = document.getElementById('logo-home');
     function goHome() {
       menuItems.forEach(i => i.classList.remove('active'));
       content.innerHTML = homeContent;
