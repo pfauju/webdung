@@ -239,12 +239,16 @@
   </main>
 
   <script>
+    // Elemente finden
     const content = document.getElementById('content');
-    const menuItems = document.querySelectorAll('nav a[role="menuitem"]');
+    const menuDuenge = document.getElementById('menu-duengestrategie');
+    const menuLager = document.getElementById('menu-lager');
+    const menuFelder = document.getElementById('menu-felder');
     const logoHome = document.getElementById('logo-home');
 
-    const pages = {
-      'menu-duengestrategie': `
+    // Seiteninhalte
+    const pageContent = {
+      duengestrategie: `
         <div class="content-container">
           <div class="page-content">
             <h1>Düngestrategie</h1>
@@ -271,7 +275,7 @@
           </div>
         </div>
       `,
-      'menu-lager': `
+      lager: `
         <div class="content-container">
           <div class="page-content">
             <h1>Lager</h1>
@@ -298,7 +302,7 @@
           </div>
         </div>
       `,
-      'menu-felder': `
+      felder: `
         <div class="content-container">
           <div class="page-content">
             <h1>Felder</h1>
@@ -324,76 +328,92 @@
             </div>
           </div>
         </div>
-      `
-    };
-
-    const homeContent = `
-      <div class="content-container">
-        <div class="page-content">
-          <h1>Willkommen im Landwirtschafts-Management System</h1>
-          <p style="font-size: 1.2em; color: #5a6c7d; margin-bottom: 30px;">
-            Verwalten Sie Ihre landwirtschaftlichen Ressourcen effizient und übersichtlich.
-          </p>
-          
-          <div class="welcome-content">
-            <div class="feature-card">
-              <h3>🌱 Düngestrategie</h3>
-              <p>Planen und optimieren Sie Ihre Düngemaßnahmen für maximale Erträge bei nachhaltiger Bewirtschaftung.</p>
-            </div>
+      `,
+      home: `
+        <div class="content-container">
+          <div class="page-content">
+            <h1>Willkommen im Landwirtschafts-Management System</h1>
+            <p style="font-size: 1.2em; color: #5a6c7d; margin-bottom: 30px;">
+              Verwalten Sie Ihre landwirtschaftlichen Ressourcen effizient und übersichtlich.
+            </p>
             
-            <div class="feature-card">
-              <h3>📦 Lagerverwaltung</h3>
-              <p>Behalten Sie den Überblick über Ihren Lagerbestand und optimieren Sie Ihre Vorratshaltung.</p>
-            </div>
-            
-            <div class="feature-card">
-              <h3>🚜 Feldermanagement</h3>
-              <p>Verwalten Sie Ihre Felder, Fruchtfolgen und Bewirtschaftungsmaßnahmen zentral an einem Ort.</p>
+            <div class="welcome-content">
+              <div class="feature-card">
+                <h3>🌱 Düngestrategie</h3>
+                <p>Planen und optimieren Sie Ihre Düngemaßnahmen für maximale Erträge bei nachhaltiger Bewirtschaftung.</p>
+              </div>
+              
+              <div class="feature-card">
+                <h3>📦 Lagerverwaltung</h3>
+                <p>Behalten Sie den Überblick über Ihren Lagerbestand und optimieren Sie Ihre Vorratshaltung.</p>
+              </div>
+              
+              <div class="feature-card">
+                <h3>🚜 Feldermanagement</h3>
+                <p>Verwalten Sie Ihre Felder, Fruchtfolgen und Bewirtschaftungsmaßnahmen zentral an einem Ort.</p>
+              </div>
             </div>
           </div>
         </div>
-      </div>
-    `;
+      `
+    };
 
-    // Navigation für Menüpunkte
-    menuItems.forEach(item => {
-      item.addEventListener('click', e => {
-        e.preventDefault();
-        
-        // Aktiven Menüpunkt setzen
-        menuItems.forEach(i => i.classList.remove('active'));
-        item.classList.add('active');
-        
-        // Inhalt ändern
-        content.innerHTML = pages[item.id];
+    // Hilfsfunktion: Alle Menüs inaktiv setzen
+    function clearActiveMenus() {
+      document.querySelectorAll('nav a').forEach(link => {
+        link.classList.remove('active');
       });
-      
-      // Keyboard navigation
-      item.addEventListener('keydown', e => {
-        if (e.key === 'Enter' || e.key === ' ') {
-          e.preventDefault();
-          item.click();
-        }
-      });
-    });
-
-    // Logo/Home Navigation
-    const logoHome = document.getElementById('logo-home');
-    function goHome() {
-      menuItems.forEach(i => i.classList.remove('active'));
-      content.innerHTML = homeContent;
     }
 
-    logoHome.addEventListener('click', goHome);
-    logoHome.addEventListener('keydown', e => {
-      if (e.key === 'Enter' || e.key === ' ') {
-        e.preventDefault();
-        goHome();
+    // Hilfsfunktion: Seite anzeigen
+    function showPage(pageName, activeElement) {
+      if (pageContent[pageName]) {
+        content.innerHTML = pageContent[pageName];
+        clearActiveMenus();
+        if (activeElement) {
+          activeElement.classList.add('active');
+        }
       }
-    });
+    }
 
-    // Initiale Seite setzen (Düngestrategie ist aktiv)
-    content.innerHTML = pages['menu-duengestrategie'];
+    // Event Listener für Düngestrategie
+    if (menuDuenge) {
+      menuDuenge.addEventListener('click', function(e) {
+        e.preventDefault();
+        console.log('Düngestrategie geklickt');
+        showPage('duengestrategie', menuDuenge);
+      });
+    }
+
+    // Event Listener für Lager
+    if (menuLager) {
+      menuLager.addEventListener('click', function(e) {
+        e.preventDefault();
+        console.log('Lager geklickt');
+        showPage('lager', menuLager);
+      });
+    }
+
+    // Event Listener für Felder
+    if (menuFelder) {
+      menuFelder.addEventListener('click', function(e) {
+        e.preventDefault();
+        console.log('Felder geklickt');
+        showPage('felder', menuFelder);
+      });
+    }
+
+    // Event Listener für Logo/Home
+    if (logoHome) {
+      logoHome.addEventListener('click', function(e) {
+        e.preventDefault();
+        console.log('Logo geklickt');
+        showPage('home');
+      });
+    }
+
+    // Initiale Seite laden
+    showPage('duengestrategie', menuDuenge);
   </script>
 </body>
 </html>
