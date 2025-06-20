@@ -310,6 +310,24 @@
               Zentrale Verwaltung aller Ackerflächen und Bewirtschaftungsmaßnahmen.
             </p>
             
+            <!-- JSON Import Bereich -->
+            <div class="info-box" style="margin-bottom: 25px; border-left-color: #27ae60;">
+              <h3>📁 Felddaten importieren</h3>
+              <input type="file" id="json-upload" accept=".json" style="margin: 10px 0; padding: 8px; border: 1px solid #ddd; border-radius: 4px;">
+              <button onclick="importJSON()" style="padding: 8px 16px; background-color: #27ae60; color: white; border: none; border-radius: 4px; cursor: pointer; margin-left: 10px;">JSON importieren</button>
+            </div>
+
+            <!-- Karten Container -->
+            <div id="map-container" style="height: 400px; margin-bottom: 25px; border: 1px solid #ddd; border-radius: 8px; display: none;">
+              <div id="map" style="height: 100%; width: 100%;"></div>
+            </div>
+
+            <!-- Felder Liste -->
+            <div id="felder-liste" style="display: none;">
+              <h2 style="color: #2c3e50; margin-bottom: 20px;">📋 Feldübersicht</h2>
+              <div id="felder-tabelle"></div>
+            </div>
+            
             <div class="info-grid">
               <div class="info-box">
                 <h3>Schlagkartei</h3>
@@ -328,6 +346,191 @@
             </div>
           </div>
         </div>
+
+        <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+        <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
+        
+        <style>
+          .feld-tabelle {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+          }
+          
+          .feld-tabelle th {
+            background-color: #2c3e50;
+            color: white;
+            padding: 12px;
+            text-align: left;
+            font-weight: 600;
+          }
+          
+          .feld-tabelle td {
+            padding: 12px;
+            border-bottom: 1px solid #eee;
+          }
+          
+          .feld-tabelle tr:hover {
+            background-color: #f8f9fa;
+          }
+          
+          .kultur-tag {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.9em;
+            font-weight: 500;
+          }
+          
+          .kultur-getreide { background-color: #fff3cd; color: #856404; }
+          .kultur-raps { background-color: #fff3cd; color: #856404; }
+          .kultur-mais { background-color: #d4edda; color: #155724; }
+          .kultur-zuckerruebe { background-color: #f8d7da; color: #721c24; }
+          .kultur-kartoffel { background-color: #d1ecf1; color: #0c5460; }
+          .kultur-default { background-color: #e2e3e5; color: #383d41; }
+        </style>
+
+        <script>
+          let map = null;
+          let felderData = [];
+          
+          function importJSON() {
+            const fileInput = document.getElementById('json-upload');
+            const file = fileInput.files[0];
+            
+            if (!file) {
+              alert('Bitte wählen Sie eine JSON-Datei aus.');
+              return;
+            }
+            
+            const reader = new FileReader();
+            reader.onload = function(e) {
+              try {
+                const data = JSON.parse(e.target.result);
+                felderData = data.felder || data;
+                initializeMap();
+                showFelderListe();
+              } catch (error) {
+                alert('Fehler beim Lesen der JSON-Datei: ' + error.message);
+              }
+            };
+            reader.readAsText(file);
+          }
+          
+          function initializeMap() {
+            const mapContainer = document.getElementById('map-container');
+            mapContainer.style.display = 'block';
+            
+            if (map) {
+              map.remove();
+            }
+            
+            map = L.map('map').setView([51.1657, 10.4515], 6); // Deutschland Zentrum
+            
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+              attribution: '© OpenStreetMap contributors'
+            }).addTo(map);
+            
+            const bounds = [];
+            
+            felderData.forEach((feld, index) => {
+              if (feld.coordinates && feld.coordinates.length > 0) {
+                const polygon = L.polygon(feld.coordinates, {
+                  color: getKulturColor(feld.kultur),
+                  fillColor: getKulturColor(feld.kultur),
+                  fillOpacity: 0.3,
+                  weight: 2
+                }).addTo(map);
+                
+                polygon.bindPopup(\`
+                  <strong>\${feld.name || 'Feld ' + (index + 1)}</strong><br>
+                  Kultur: \${feld.kultur || 'Nicht angegeben'}<br>
+                  Größe: \${feld.groesse || 'Nicht angegeben'} ha<br>
+                  Düngung: \${feld.duengestrategie || 'Nicht geplant'}
+                \`);
+                
+                // Bounds für Auto-Zoom sammeln
+                feld.coordinates.forEach(coord => bounds.push(coord));
+              }
+            });
+            
+            if (bounds.length > 0) {
+              map.fitBounds(bounds);
+            }
+          }
+          
+          function getKulturColor(kultur) {
+            const colors = {
+              'weizen': '#f39c12',
+              'gerste': '#e67e22',
+              'roggen': '#d35400',
+              'raps': '#f1c40f',
+              'mais': '#27ae60',
+              'zuckerrübe': '#e74c3c',
+              'kartoffel': '#3498db'
+            };
+            return colors[kultur?.toLowerCase()] || '#95a5a6';
+          }
+          
+          function getKulturClass(kultur) {
+            const classes = {
+              'weizen': 'kultur-getreide',
+              'gerste': 'kultur-getreide', 
+              'roggen': 'kultur-getreide',
+              'raps': 'kultur-raps',
+              'mais': 'kultur-mais',
+              'zuckerrübe': 'kultur-zuckerruebe',
+              'kartoffel': 'kultur-kartoffel'
+            };
+            return classes[kultur?.toLowerCase()] || 'kultur-default';
+          }
+          
+          function showFelderListe() {
+            const listeContainer = document.getElementById('felder-liste');
+            const tabelleContainer = document.getElementById('felder-tabelle');
+            
+            listeContainer.style.display = 'block';
+            
+            let tabelleHTML = \`
+              <table class="feld-tabelle">
+                <thead>
+                  <tr>
+                    <th>Feldname</th>
+                    <th>Kultur</th>
+                    <th>Größe (ha)</th>
+                    <th>Düngerstrategie</th>
+                  </tr>
+                </thead>
+                <tbody>
+            \`;
+            
+            felderData.forEach((feld, index) => {
+              tabelleHTML += \`
+                <tr>
+                  <td><strong>\${feld.name || 'Feld ' + (index + 1)}</strong></td>
+                  <td>
+                    <span class="kultur-tag \${getKulturClass(feld.kultur)}">
+                      \${feld.kultur || 'Nicht angegeben'}
+                    </span>
+                  </td>
+                  <td>\${feld.groesse || 'N/A'}</td>
+                  <td>\${feld.duengestrategie || 'Nicht geplant'}</td>
+                </tr>
+              \`;
+            });
+            
+            tabelleHTML += \`
+                </tbody>
+              </table>
+            \`;
+            
+            tabelleContainer.innerHTML = tabelleHTML;
+          }
+        </script>
       `,
       home: `
         <div class="content-container">
