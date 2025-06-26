@@ -1457,6 +1457,358 @@
         }, 100);
       }
     };
+
+      // Globale Variable für Strategien
+let strategienListe = [];
+
+// Strategie hinzufügen
+function strategieHinzufuegen() {
+    const strategiename = document.getElementById('strategie-name').value.trim();
+    const kultur = document.getElementById('kultur-auswahl').value;
+    const duenger = document.getElementById('duenger-auswahl').value;
+    const menge = parseFloat(document.getElementById('duenger-menge').value);
+    const zeitpunkt = document.getElementById('zeitpunkt-auswahl').value;
+    const geraet = document.getElementById('geraet-auswahl').value;
+    const bemerkungen = document.getElementById('strategie-bemerkung').value.trim();
+    
+    // Validierung
+    if (!strategiename || !kultur || !duenger || !menge || !zeitpunkt || !geraet) {
+        alert('Bitte füllen Sie alle Pflichtfelder aus!');
+        return;
+    }
+    
+    if (menge <= 0) {
+        alert('Die Düngermenge muss größer als 0 sein!');
+        return;
+    }
+    
+    // Daten für API
+    const strategieData = {
+        strategiename: strategiename,
+        kultur: kultur,
+        duenger: duenger,
+        menge: menge,
+        zeitpunkt: zeitpunkt,
+        geraet: geraet,
+        bemerkungen: bemerkungen
+    };
+    
+    // An Server senden
+    fetch('/api/strategie', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(strategieData)
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('Fehler beim Speichern');
+        }
+        return response.json();
+    })
+    .then(data => {
+        alert('Strategie erfolgreich gespeichert!');
+        strategienFormularLeeren();
+        strategienLaden();
+    })
+    .catch(error => {
+        console.error('Fehler:', error);
+        alert('Fehler beim Speichern der Strategie: ' + error.message);
+    });
+}
+
+// Formular leeren
+function strategienFormularLeeren() {
+    document.getElementById('strategie-name').value = '';
+    document.getElementById('kultur-auswahl').value = '';
+    document.getElementById('duenger-auswahl').value = '';
+    document.getElementById('duenger-menge').value = '';
+    document.getElementById('zeitpunkt-auswahl').value = '';
+    document.getElementById('geraet-auswahl').value = '';
+    document.getElementById('strategie-bemerkung').value = '';
+}
+
+// Strategien von Server laden
+function strategienLaden() {
+    fetch('/api/strategien')
+    .then(response => response.json())
+    .then(data => {
+        strategienListe = data;
+        strategienTabelleAktualisieren();
+    })
+    .catch(error => {
+        console.error('Fehler beim Laden der Strategien:', error);
+    });
+}
+
+// Tabelle aktualisieren
+function strategienTabelleAktualisieren() {
+    const tbody = document.getElementById('strategien-tbody');
+    if (!tbody) return;
+    
+    tbody.innerHTML = '';
+    
+    if (strategienListe.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="7" style="text-align: center; color: #666;">Noch keine Strategien vorhanden</td></tr>';
+        return;
+    }
+    
+    strategienListe.forEach(strategie => {
+        const row = document.createElement('tr');
+        row.innerHTML = `
+            <td><strong>${strategie.strategiename}</strong></td>
+            <td><span class="kultur-tag">${strategie.kultur}</span></td>
+            <td>${strategie.duenger}</td>
+            <td>${strategie.menge} kg/ha</td>
+            <td>${strategie.zeitpunkt}</td>
+            <td>${strategie.geraet}</td>
+            <td>
+                <button onclick="strategieLoeschen(${strategie.id})" 
+                        class="btn-delete" 
+                        style="background-color: #e74c3c; color: white; border: none; padding: 5px 10px; border-radius: 4px; cursor: pointer; font-size: 0.9em;">
+                    Löschen
+                </button>
+            </td>
+        `;
+        tbody.appendChild(row);
+    });
+}
+
+// Strategie löschen
+function strategieLoeschen(id) {
+    if (!confirm('Sind Sie sicher, dass Sie diese Strategie löschen möchten?')) {
+        return;
+    }
+    
+    fetch(`/api/strategie/${id}`, {
+        method: 'DELETE'
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('Fehler beim Löschen');
+        }
+        return response.text();
+    })
+    .then(() => {
+        alert('Strategie erfolgreich gelöscht!');
+        strategienLaden();
+    })
+    .catch(error => {
+        console.error('Fehler:', error);
+        alert('Fehler beim Löschen der Strategie: ' + error.message);
+    });
+}
+
+// CSS Styles für Kultur-Tags
+const strategieStyles = `
+    .kultur-tag {
+        display: inline-block;
+        padding: 4px 8px;
+        border-radius: 4px;
+        font-size: 0.9em;
+        font-weight: 500;
+        background-color: #e8f4fd;
+        color: #2980b9;
+    }
+    
+    .btn-delete:hover {
+        background-color: #c0392b !important;
+    }
+    
+    .strategien-tabelle {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 15px;
+        background: white;
+        border-radius: 8px;
+        overflow: hidden;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+    
+    .strategien-tabelle th {
+        background-color: #2c3e50;
+        color: white;
+        padding: 12px;
+        text-align: left;
+        font-weight: 600;
+    }
+    
+    .strategien-tabelle td {
+        padding: 12px;
+        border-bottom: 1px solid #eee;
+    }
+    
+    .strategien-tabelle tr:hover {
+        background-color: #f8f9fa;
+    }
+`;
+
+// Styles hinzufügen
+const styleSheet = document.createElement('style');
+styleSheet.textContent = strategieStyles;
+document.head.appendChild(styleSheet);
+
+// Beim Laden der Seite Strategien laden
+document.addEventListener('DOMContentLoaded', function() {
+    // Kurze Verzögerung um sicherzustellen, dass die Seite vollständig geladen ist
+    setTimeout(() => {
+        strategienLaden();
+    }, 500);
+});
+
+// Hier den kompletten JavaScript Code aus dem vorherigen Artifact einfügen
+// (Das gesamte JavaScript von der "javascript_functions" Datei)
+// Strategie hinzufügen
+function strategieHinzufuegen() {
+    const strategiename = document.getElementById('strategie-name').value.trim();
+    const kultur = document.getElementById('kultur-auswahl').value;
+    const duenger = document.getElementById('duenger-auswahl').value;
+    const menge = parseFloat(document.getElementById('duenger-menge').value);
+    const zeitpunkt = document.getElementById('zeitpunkt-auswahl').value;
+    const geraet = document.getElementById('geraet-auswahl').value;
+    const bemerkungen = document.getElementById('strategie-bemerkung').value.trim();
+    
+    // Validierung
+    if (!strategiename || !kultur || !duenger || !menge || !zeitpunkt || !geraet) {
+        alert('Bitte füllen Sie alle Pflichtfelder aus!');
+        return;
+    }
+    
+    if (menge <= 0) {
+        alert('Die Düngermenge muss größer als 0 sein!');
+        return;
+    }
+    
+    // Daten für API
+    const strategieData = {
+        strategiename: strategiename,
+        kultur: kultur,
+        duenger: duenger,
+        menge: menge,
+        zeitpunkt: zeitpunkt,
+        geraet: geraet,
+        bemerkungen: bemerkungen
+    };
+    
+    // An Server senden
+    fetch('/api/strategie', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(strategieData)
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('Fehler beim Speichern');
+        }
+        return response.json();
+    })
+    .then(data => {
+        alert('Strategie erfolgreich gespeichert!');
+        strategienFormularLeeren();
+        strategienLaden();
+    })
+    .catch(error => {
+        console.error('Fehler:', error);
+        alert('Fehler beim Speichern der Strategie: ' + error.message);
+    });
+}
+
+// Formular leeren
+function strategienFormularLeeren() {
+    document.getElementById('strategie-name').value = '';
+    document.getElementById('kultur-auswahl').value = '';
+    document.getElementById('duenger-auswahl').value = '';
+    document.getElementById('duenger-menge').value = '';
+    document.getElementById('zeitpunkt-auswahl').value = '';
+    document.getElementById('geraet-auswahl').value = '';
+    document.getElementById('strategie-bemerkung').value = '';
+}
+
+// Strategien von Server laden
+function strategienLaden() {
+    fetch('/api/strategien')
+    .then(response => response.json())
+    .then(data => {
+        strategienListe = data;
+        strategienTabelleAktualisieren();
+    })
+    .catch(error => {
+        console.error('Fehler beim Laden der Strategien:', error);
+    });
+}
+
+// Tabelle aktualisieren
+function strategienTabelleAktualisieren() {
+    const tbody = document.getElementById('strategien-tbody');
+    if (!tbody) return;
+    
+    tbody.innerHTML = '';
+    
+    if (strategienListe.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="7" style="text-align: center; color: #666;">Noch keine Strategien vorhanden</td></tr>';
+        return;
+    }
+    
+    strategienListe.forEach(strategie => {
+        const row = document.createElement('tr');
+        row.innerHTML = `
+            <td><strong>${strategie.strategiename}</strong></td>
+            <td><span class="kultur-tag">${strategie.kultur}</span></td>
+            <td>${strategie.duenger}</td>
+            <td>${strategie.menge} kg/ha</td>
+            <td>${strategie.zeitpunkt}</td>
+            <td>${strategie.geraet}</td>
+            <td>
+                <button onclick="strategieLoeschen(${strategie.id})" 
+                        class="btn-delete" 
+                        style="background-color: #e74c3c; color: white; border: none; padding: 5px 10px; border-radius: 4px; cursor: pointer; font-size: 0.9em;">
+                    Löschen
+                </button>
+            </td>
+        `;
+        tbody.appendChild(row);
+    });
+}
+
+// Strategie löschen
+function strategieLoeschen(id) {
+    if (!confirm('Sind Sie sicher, dass Sie diese Strategie löschen möchten?')) {
+        return;
+    }
+    
+    fetch(`/api/strategie/${id}`, {
+        method: 'DELETE'
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('Fehler beim Löschen');
+        }
+        return response.text();
+    })
+    .then(() => {
+        alert('Strategie erfolgreich gelöscht!');
+        strategienLaden();
+    })
+    .catch(error => {
+        console.error('Fehler:', error);
+        alert('Fehler beim Löschen der Strategie: ' + error.message);
+    });
+}
+
+// Styles hinzufügen
+const styleSheet = document.createElement('style');
+styleSheet.textContent = strategieStyles;
+document.head.appendChild(styleSheet);
+
+// Beim Laden der Seite Strategien laden
+document.addEventListener('DOMContentLoaded', function() {
+    setTimeout(() => {
+        strategienLaden();
+    }, 500);
+});
   </script>
 </body>
 </html>
