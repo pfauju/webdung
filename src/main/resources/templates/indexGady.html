@@ -1809,6 +1809,20 @@ document.addEventListener('DOMContentLoaded', function() {
         strategienLaden();
     }, 500);
 });
+
   </script>
+  <h2>Gespeicherte Strategien:</h2>
+<ul>
+    <li th:each="s : ${alleStrategien}">
+        <strong th:text="${s.name}"></strong> –
+        <span th:text="${s.kultur}"></span>,
+        <span th:text="${s.duenger}"></span>,
+        <span th:text="${s.menge} + ' kg/ha'"></span>,
+        <span th:text="${s.zeitpunkt}"></span>,
+        <span th:text="${s.geraet}"></span>,
+        <i th:text="${s.bemerkungen}"></i>
+    </li>
+</ul>
+
 </body>
 </html>
