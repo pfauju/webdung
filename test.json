@@ -1,0 +1,94 @@
+{
+  "felder": [
+    {
+      "name": "Acker Nordfeld",
+      "kultur": "Weizen",
+      "groesse": "12.5",
+      "duengestrategie": "Standard NPK 140-80-120",
+      "coordinates": [
+        [
+          [48.1285, 15.1293],
+          [48.1292, 15.1310],
+          [48.1280, 15.1322],
+          [48.1273, 15.1305],
+          [48.1285, 15.1293]
+        ]
+      ]
+    },
+    {
+      "name": "Südwiese",
+      "kultur": "Mais",
+      "groesse": "8.3",
+      "duengestrategie": "Organisch + Mineral",
+      "coordinates": [
+        [
+          [48.1296, 15.1415],
+          [48.1302, 15.1432],
+          [48.1288, 15.1440],
+          [48.1282, 15.1420],
+          [48.1296, 15.1415]
+        ]
+      ]
+    },
+    {
+      "name": "Brückenacker Ost",
+      "kultur": "Raps",
+      "groesse": "15.7",
+      "duengestrategie": "Herbstdüngung N-180",
+      "coordinates": [
+        [
+          [48.1270, 15.1195],
+          [48.1276, 15.1212],
+          [48.1264, 15.1221],
+          [48.1258, 15.1204],
+          [48.1270, 15.1195]
+        ]
+      ]
+    },
+    {
+      "name": "Großer Acker",
+      "kultur": "Kartoffel",
+      "groesse": "6.2",
+      "duengestrategie": "Kompost + NPK",
+      "coordinates": [
+        [
+          [48.1320, 15.1330],
+          [48.1327, 15.1347],
+          [48.1313, 15.1355],
+          [48.1307, 15.1339],
+          [48.1320, 15.1330]
+        ]
+      ]
+    },
+    {
+      "name": "Kuhweide",
+      "kultur": "Zuckerrübe",
+      "groesse": "11.8",
+      "duengestrategie": "Präzisionsdüngung",
+      "coordinates": [
+        [
+          [48.1300, 15.1500],
+          [48.1308, 15.1517],
+          [48.1294, 15.1525],
+          [48.1287, 15.1508],
+          [48.1300, 15.1500]
+        ]
+      ]
+    },
+    {
+      "name": "Steinacker",
+      "kultur": "Gerste",
+      "groesse": "9.4",
+      "duengestrategie": "Reduzierte N-Düngung",
+      "coordinates": [
+        [
+          [48.1310, 15.1395],
+          [48.1316, 15.1412],
+          [48.1303, 15.1420],
+          [48.1297, 15.1403],
+          [48.1310, 15.1395]
+        ]
+      ]
+    }
+  ]
+}
